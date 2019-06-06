@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>修改个人信息</title>
+    <link rel="stylesheet" type="text/css" href="../../static/register.css">
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</head>
+<body background = "../../static/4.jpg">
+
+
+    <ul class="nav nav-pills">
+        <li role="presentation" class="active"><a href="/blog/index">Home</a></li>
+        <li role="presentation"><a href="#">图片系统</a></li>
+        <li role="presentation"><a href="/blog/edit">修改个人信息</a></li>
+    </ul>
+
+    
+    <div class="wrap">
+        <div class="container">
+
+            <h1>{{ username }},请修改个人信息</h1>
+
+
+            <form method = "POST" action="{% url 'check3' %}">
+                {% csrf_token %}
+                <input name = 'new_password' type="password" placeholder= '新的密码'>
+                <input name = 'confirm' type="password" placeholder="再次输入新的密码">
+                <p>{{ message }}</p>
+                <input name = 'email' type="text" placeholder= 'email' value = "{{ 邮箱 }}" >
+                <input name = 'phone' type="text" placeholder= 'phone_number' value = "{{ 电话号码 }}" >
+                <input type="submit" value="立即修改"/>
+            </form>
+
+
+        </div>
+    </div>
+</body>
+</html>

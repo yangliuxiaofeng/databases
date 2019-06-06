@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>博客网站登录界面</title>
+    <link rel="stylesheet" type="text/css" href="../../static/register.css">
+</head>
+<body background = "../../static/4.jpg">
+    <div class="wrap">
+        <div class="container">
+
+
+            <h1>Welcome</h1>
+
+
+            <form method = "POST" action="{% url 'check' %}">
+                {% csrf_token %}
+                <input name = 'username' type="text" placeholder= 'user-id' value = "{{ username }}" >
+                <input name = 'password' type="password" placeholder= 'password' value = "{{ password }}" >
+                <input type="submit" value="Login"/>
+                <p> {{ message }} </p>
+                <a href = "/blog/register">
+                    <input type="button" style = "font-size:18px" value="register"/>
+                </a>
+            </form>
+
+            
+        </div>
+    </div>
+</body>
+</html>
