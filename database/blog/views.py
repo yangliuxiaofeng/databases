@@ -32,6 +32,43 @@ def show_register(request):
 def person_info(request):
     return render(request, 'edit.html')
 
+def show_insert(request):
+    return render(request, 'insert.html')
+
+def delete(request):
+    username = request.COOKIES['username']
+    if (request.method == 'POST'):
+        delete_content = request.POST.get('delete')
+
+        flag = 0
+        cursor = connection.cursor()
+        select_all = 'select username from info'
+        cursor.execute(select_all)
+        selected = cursor.fetchall()
+        for row in selected:
+            if(row[0] == username):
+                print(row[0])
+                flag = 1
+                break
+        if(flag == 1):
+            print(1)
+            if(delete_content == '立即删除'):
+                mysql = 'delete from info where username = ' + '\'' + str(username) + '\''
+                cursor.execute(mysql)
+                return render(request, 'login.html')
+            else:
+                return render(request, 'delete.html',{
+                    'username' : username,
+                    'message' : 'input wrong'
+                })
+        else:
+            print(2)
+            return render(request, 'login.html')
+    else:
+        return render(request, 'delete.html', { 
+            'username' : username,
+            'message' : ''
+        })
 
 # 登录
 def login(request):
@@ -76,27 +113,31 @@ def login(request):
 # 注册
 def register(request):
 
+
     # 获取信息
     if (request.method == 'POST'):
+        print(1)
         username = request.POST.get('username')
         password = request.POST.get('password')
         confirm  = request.POST.get('confirm')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
 
-    # 转换页面
-    if(str(confirm) != str(password)):
-        return render(request, 'register.html',{
-            "message" : "两次输入的密码不同"
-        })
+        # 转换页面
+        if(str(confirm) != str(password)):
+            return render(request, 'register.html',{
+                "message" : "两次输入的密码不同"
+            })
+        else:
+            # 向数据库插入数据
+            cursor = connection.cursor()
+            mysql = "insert into info values" + "(" + "\'" + str(username) + "\'" + "," \
+                + "\'" + str(password) + "\'" + ',' + "\'" + str(email) + "\'" + ',' + "\'" + str(phone) + "\'" +")"
+            cursor.execute(mysql)
+            # print(mysql)
+            return render(request, 'login.html')
     else:
-        # 向数据库插入数据
-        cursor = connection.cursor()
-        mysql = "insert into info values" + "(" + "\'" + str(username) + "\'" + "," \
-            + "\'" + str(password) + "\'" + ',' + "\'" + str(email) + "\'" + ',' + "\'" + str(phone) + "\'" +")"
-        cursor.execute(mysql)
-        # print(mysql)
-        return render(request, 'login.html')
+        return render(request, 'register.html')
 
 
 
@@ -123,6 +164,30 @@ def get_detail_page(request, article_id):
 
     if(request.method == 'POST'):
         comment = request.POST.get('comment')
+
+
+        if(comment != ''):
+            username = request.COOKIES['username']
+            cursor1 = connection.cursor()
+            
+            sentence = 'select email from info where username = ' + "\'" + str(username) + "\'"
+
+            print(sentence)
+            cursor1.execute(sentence)
+            email_all = cursor1.fetchall()
+            for row in email_all:
+                email = row[0]
+            
+            print(email)
+            
+            
+            sentence1 = 'insert into comment values (' + "\'" + str(username) + "\'" + ',' \
+                + "\'" + str(comment) + "\'" + ',' + "\'" + str(email) + "\'" + ',' + str(article_id) + ')'
+            print(sentence1)
+            cursor1.execute(sentence1)
+
+
+
     # 获取所有文章信息
     all_article = Article.objects.all()
     curr_article = None
@@ -235,3 +300,22 @@ def edit(request):
             'message' : '请输入正确的账号'
         }
         )
+
+
+def insert(request):
+    if (request.method == 'POST'):
+        print(1)
+        title = request.POST.get('title')
+        brief_content = request.POST.get('brief_content')
+        content = request.POST.get('content')
+
+        a = Article()
+        a.title = title
+        a.brief_content = brief_content
+        a.content = content
+        a.save()
+
+        return render(request, 'insert.html')
+    else:
+        print(2)
+        return render(request, 'insert.html')
